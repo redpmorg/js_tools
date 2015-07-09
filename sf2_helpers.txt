@@ -1,0 +1,20 @@
+ORM creating entities from existing tables
+========================================
+#map *.orm.yml
+console doctrine:mapping:convert yml src/Mark/LoginBundle/Resources/config/doctrine/metadata/orm --from-database --force
+
+#import and buid entity
+console doctrine:mapping:import MarkLoginBundle annotation
+
+#clear the cache
+console cache:clear -e=prod
+console cache:clear -e=dev
+
+#generate getters & setters
+console doctrine:generate:entities MarkLoginBundle:EntityName
+
+
+#mesaje eroare authentificare 
+vendor/symfony/symfony/src/Symfony/Component/Security/Core/Authentication/Provider/*.php
+
+#access_control
