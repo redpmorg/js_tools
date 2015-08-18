@@ -9,7 +9,7 @@ counter.js [Check inactivity on admin section]
 How to work:
 ============
 Add in your html file:
-<span id="counter"></span>
-<script type="text/javascript" src="counter.js"></script>
+&lt;span id="counter"&gt;&lt;/span&gt;
+&lt;script type="text/javascript" src="counter.js"&gt;&lt;/script&gt;
 
 Done!
