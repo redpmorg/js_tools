@@ -1,5 +1,5 @@
 /**
- * Logout if no activity is logged in 10 minutes
+ * Logout if no activity is registered in 10 minutes
  *
  * @authors Leonard LEPADATU (lepadatu.leonard-ext@groupehn.com)
  * @date    2015-07-02 15:15:31
