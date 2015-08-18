@@ -1,11 +1,11 @@
 /**
  * General Validation Rules
- * @authors Leonard LEPADATU (lepadatu.leonard-ext@groupehn.com)
+ * @authors Leonard LEPADATU (leonardlepadatu@yahoo.com)
  * @date    2015-07-06 10:07:27
  * @version $Id$
  */
-
  var validationMessageLanguage = !validationMessageLanguage ? "fr" : validationMessageLanguage;
+ var validEmailDomain = "redgoat.org";
  var validationConstraints = {
 	messages: {
 		text: {
@@ -108,7 +108,6 @@
 				}
 			},
 			validDomain: function(v) {
-				var validEmailDomain = "groupehn.com";
 				var myRegExp = new RegExp("/^[a-zA-Z0-9._%\+-]+" + validEmailDomain + "$/", "i");
 				var valid = (myRegExp.test(v)) ? true : false;
 				return {
