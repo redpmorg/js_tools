@@ -1,12 +1,17 @@
 /**
  * General Validation Rules
- * @authors Leonard LEPADATU (leonardlepadatu@yahoo.com)
+ * @authors Leonard LEPADATU (lepadatu.leonard-ext@groupehn.com)
  * @date    2015-07-06 10:07:27
  * @version $Id$
  */
  var validationMessageLanguage = !validationMessageLanguage ? "fr" : validationMessageLanguage;
- var validEmailDomain = "redgoat.org";
  var validationConstraints = {
+	errorContainer: function(m, s) {
+		if("undefined" !== typeof s) {
+			s.parent().addClass('has-error');
+		}
+		return "<p class='validationMessages text-danger input-group'>" +m+ "</p>";
+	},
 	messages: {
 		text: {
 			notEmpty: {
@@ -16,17 +21,27 @@
 			},
 		},
 		integer: {
-			isValid: {
+			notZero: {
 				en: "This must be a number but non zero!",
 				fr: "Ce doit être un nombre, mais non nulle!",
 				ro: "Acesta trebuie sa fie un numar, dar nu zero!"
 			},
+			isValid: {
+				en: "This must be a number!",
+				fr: "Ce doit être un nombre!",
+				ro: "Acesta trebuie sa fie un numar!"
+			},
 		},
 		url: {
 			isValid: {
-				en: "This field must be of the form:http://...!",
-				fr: "Ce champ doit être de la forme:http://...!",
-				ro: "Acest camp trebuie sa fie de forma: http://...!"
+				en: "This field must be of the form: www. ...!",
+				fr: "Ce champ doit être de la forme: www. ...!",
+				ro: "Acest camp trebuie sa fie de forma: www. ...!"
+			},
+			notEmpty: {
+				en: "This field must be of the form: www. ...!",
+				fr: "Ce champ doit être de la forme: www. ...!",
+				ro: "Acest camp trebuie sa fie de forma: www. ...!"
 			},
 		},
 		color: {
@@ -39,13 +54,13 @@
 		email: {
 			isValid: {
 				en: "Please enter a valid email!",
-				fr: "S'il vous plaît entrer une adresse email valide!",
+				fr: "S'il vous plaît entrez une adresse email valide !",
 				ro: "Va rog introduceti o adresa de email valida!"
 			},
 			validDomain: function(d) {
 				return {
 					en: "Please enter a valid email on domain &lt;" + d +"&gt; !",
-					fr: "S'il vous plaît entrer une adresse email valide on domaine &lt;" + d +"&gt; !",
+					fr: "S'il vous plaît entrez une adresse email valide on domaine &lt;" + d +"&gt; !",
 					ro: "Va rog introduceti o adresa de email valida in domeniul &lt;" + d +"&gt; !"
 				}
 			}
@@ -53,14 +68,52 @@
 		date: {
 			isValid: {
 				en: "Please enter a valid date!",
-				fr: "S'il vous plaît entrer une date valide!",
+				fr: "S'il vous plaît entrez une date valide !",
 				ro: "Va rog introduceti o data valida!"
 			},
-			greaterThan: function(d) {
+			smallerThan: function(d) {
 				return {
-					en: "Please enter a date greater than &lt;" + d +"&gt; !",
-					fr: "S'il vous plaît entrer une date plus grand que &lt;" + d +"&gt; !",
-					ro: "Va rog introduceti o data mai mare decat &lt;" + d +"&gt; !"
+					en: "Please enter a date smaller than &lt;" + d +"&gt; !",
+					fr: "S'il vous plaît entrez une date plus petit que &lt;" + d +"&gt; !",
+					ro: "Va rog introduceti o data mai mica decat &lt;" + d +"&gt; !"
+				}
+			}
+		},
+		password: {
+			areTheSame: {
+				en: "Password and confirmation are not the same!",
+				fr: "Mot de passe et la confirmation ne sont pas la même chose!",
+				ro: "Confirmarea parolei nu este identica!"
+			},
+			notEmpty: {
+				en: "This password cannot be empty!",
+				fr: "Ce mod de passe ne peut être vide!",
+				ro: "Aceasta parola nu poate fi goala!"
+			}
+		},
+
+		select: {
+			notEmpty: {
+				en: "You must choose a value!",
+				fr: "Vous devez choisir une valeur!",
+				ro: "Trebuie sa alegeti o valoare!"
+			}
+		},
+
+		customSelect: {
+			notEmpty: {
+				en: "You must choose a value!",
+				fr: "Vous devez choisir une valeur!",
+				ro: "Trebuie sa alegeti o valoare!"
+			}
+		},
+
+		oneOfTwo: {
+			mustFill: function(f) {
+				return {
+					en: "Please complete with adequate contents this field or &lt;" + f +"&gt; !",
+					fr: "S'il vous plaît compléter avec contenus adéquate ce champ ou &lt;" + f +"&gt; !",
+					ro: "Va rog completati cu valori adecvate acest camp sau &lt;" + f +"&gt; !"
 				}
 			}
 		}
@@ -82,6 +135,13 @@
 				var valid = (0 != v && !isNaN(v)) ? true : false;
 				return {
 					validity: valid,
+					message: validationConstraints.messages.integer.notZero[validationMessageLanguage]
+				}
+			},
+			isValid: function(v) {
+				var valid = ("" != v && !isNaN(v)) ? true : false;
+				return {
+					validity: valid,
 					message: validationConstraints.messages.integer.isValid[validationMessageLanguage]
 				}
 			},
@@ -89,7 +149,15 @@
 
 		url: {
 			isValid: function(v) {
-				var myRegExp = /^(http|https|ftp):\/\//i;
+				var myRegExp = /^(www)./i;
+				var valid = (v == '' || myRegExp.test(v)) ? true : false;
+				return {
+					validity: valid,
+					message: validationConstraints.messages.url.isValid[validationMessageLanguage]
+				}
+			},
+			notEmpty: function(v) {
+				var myRegExp = /^(www)./i;
 				var valid = (myRegExp.test(v)) ? true : false;
 				return {
 					validity: valid,
@@ -100,7 +168,7 @@
 
 		email:{
 			isValid: function(v) {
-				var myRegExp = /^[A-Z0-9._%\+-]+@[A-Z0-9.-]+\.[a-z]{2,4}$/i;
+				var myRegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[a-z]{2,4}$/i;
 				var valid = (myRegExp.test(v)) ? true : false;
 				return {
 					validity: valid,
@@ -108,8 +176,9 @@
 				}
 			},
 			validDomain: function(v) {
-				var myRegExp = new RegExp("/^[a-zA-Z0-9._%\+-]+" + validEmailDomain + "$/", "i");
-				var valid = (myRegExp.test(v)) ? true : false;
+				var validEmailDomain = "groupehn.com";
+				var validEmail = validationConstraints.rules.email.isValid(v).validity;
+				var valid = (validEmail && validEmailDomain == v.split('@').pop()) ? true : false;
 				return {
 					validity: valid,
 					message: validationConstraints.messages.email.validDomain(validEmailDomain)[validationMessageLanguage]
@@ -131,7 +200,7 @@
 		dateSimple: {
 			isValid: function(v) {
 				if("" !== v){
-					var dateArray = v.split("/");
+					var dateArray = v.split("-");
 					var newDate = new Date(dateArray[2], dateArray[1], dateArray[0]);
 					var valid = ("Invalid Date" != newDate) ? true : false;
 				} else {
@@ -146,32 +215,103 @@
 		},
 
 		dateComplex: {
-			greaterThan: function(v, param) {
+			smallerThan: function(v, param) {
 				var refDate = $('[name="'+ param +'"]').val();
 				var d = validationConstraints.rules.dateSimple;
-				checkMyDate  = d.isValid(v).validity;
-				checkRefDate = d.isValid(refDate).validity;
-				myDate  = d.isValid(v).dateObj;
+
+				var myDate  = d.isValid(v).dateObj;
 				refDate = d.isValid(refDate).dateObj;
-				valid = ((checkMyDate && !checkRefDate) ||
-					        ((checkMyDate && checkRefDate) &&
-					       	    (myDate > refDate))) ? true : false;
+
+				var valid = true;
+				var mess = validationConstraints.messages.date.smallerThan(param)[validationMessageLanguage];
+
+				if('undefined' == typeof myDate || 'Invalid Date' == myDate || 'Invalid Date' == refDate) {
+					valid = false;
+					mess = validationConstraints.messages.date.isValid[validationMessageLanguage];
+				} else if( 'Invalid Date' == myDate && 'undefined' == typeof refDate ) {
+					valid = true;
+				} else if( myDate > refDate ) {
+					valid = false;
+				}
+
 				return {
 					validity: valid,
-					message: validationConstraints.messages.date.greaterThan(param)[validationMessageLanguage]
+					message: mess
 				}
 			}
 		},
-	},
-}
 
-$(".submit-button").on("click", function() {
-	$(".validationMessages").prev("input, select, texarea").removeClass("input-error");
+		password: {
+			areTheSame: function(currentPassword, param) {
+				var comparedPassword = $('[name$="\\[' + param + '\\]"]').val();
+				var valid = (currentPassword == comparedPassword);
+				return {
+					validity: valid,
+					message: validationConstraints.messages.password.areTheSame[validationMessageLanguage]
+				}
+			},
+			notEmpty: function(v) {
+				var valid = ("" != v || 0 != v.length) ? true : false;
+				return {
+					validity: valid,
+					message: validationConstraints.messages.password.notEmpty[validationMessageLanguage]
+				}
+			},
+		},
+
+		select: {
+			notEmpty: function(v) {
+				var valid = (0 != v) ? true : false;
+				return {
+					validity: valid,
+					message: validationConstraints.messages.select.notEmpty[validationMessageLanguage]
+				}
+			}
+		},
+
+		customSelect: {
+			notEmpty: function(v, param) {
+				selectElementsIsDisable = new Array();
+				for(var i = 0; i < param.length; i++ ) {
+					selectElementsIsDisable[i] = $("#"+param[i]).prop('disabled');
+					if(0 != $("#"+param[i]).val() && !$("#"+param[i]).prop('disabled')) {
+						v = $("#"+param[i]).val();
+					}
+				}
+				var oneIsVisible = selectElementsIsDisable.indexOf(false)
+				var valid = (0 != v && -1 != oneIsVisible) ? true : false;
+				return {
+					validity: valid,
+					message: validationConstraints.messages.customSelect.notEmpty[validationMessageLanguage]
+				}
+			}
+		},
+
+		oneOfTwo: {
+			mustFill: function(v, param) {
+				var refField = $('[name$="\\['+ param[0] +'\\]"]').val(), rule;
+				switch(param[1]) {
+					case 'integer':
+					rule = validationConstraints.rules.integer ;
+					break;
+					case 'text':
+					rule = validationConstraints.rules.text;
+					break;
+				}
+				return {
+					validity: (rule.isValid(v).validity || rule.isValid(refField).validity),
+					message: validationConstraints.messages.oneOfTwo.mustFill(param[0])[validationMessageLanguage]
+				}
+			}
+		},
+	}
+ };
+
+ var validationAction = function(form) {
+	$(".validationMessages").prev("input, select, texarea").parent().removeClass("has-error");
 	$(".validationMessages").remove();
-	var form = $(this).closest('form');
-	var inp = $("input, select, texarea", form).each(function(){
-		$this = $(this);
-
+	$("input, select, texarea", $(form)).each(function(){
+		var $this = $(this);
 		if($this.data() && $this.data("req")) {
 			var validationConstraint = $this.data("req");
 
@@ -204,13 +344,15 @@ $(".submit-button").on("click", function() {
 				}
 				// console.log(ruleValidity); console.log(ruleMessages);   // Debug Rule
 				if(!ruleValidity) {
-					$this.addClass("input-error");
-					$this.after("<p class='validationMessages text-danger input-group'>" +ruleMessages+ "</p>");
+					var mess = validationConstraints.errorContainer(ruleMessages, $this);
+					if($this.next().hasClass('selectize-control')) {
+						$this.next().after(mess);
+					} else {
+						$this.after(mess);
+					}
 				}
 			}
 		}
 	});
-	if(0 == $(".validationMessages").length) {
-		$(form).submit();
-	}
-});
+return (0 == $(".validationMessages").length) ? true : false;
+}
